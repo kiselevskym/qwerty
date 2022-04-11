@@ -7,18 +7,18 @@ type Props = {
 }
 
 const WindowTable = ({onCloseHandler}: Props) => {
-    const [number, setNumber] = React.useState<string>("0")
+    const [number, setNumber] = React.useState<number>(0)
     const [user, setUser] = React.useState<string>("Default User")
     const [comment, setComment] = React.useState("")
 
 
     const [state, setState] = React.useState([{
-        value: '555',
+        value: 555,
         date: '20.01.2020',
         user: 'Max',
         comment: 'any'
     }, {
-        value: '5668',
+        value: 5668,
         date: '21.01.2020',
         user: 'Kate',
         comment: ''
@@ -29,7 +29,7 @@ const WindowTable = ({onCloseHandler}: Props) => {
         const date = new Date()
         const date_string = `${date.getDay()}-${date.getMonth() + 1}-${date.getFullYear()}`
         setState([...state, {value: number, comment: comment, user, date: date_string}])
-        setNumber("0")
+        setNumber(0)
         setUser("Default User")
         setComment("")
     }
@@ -56,15 +56,17 @@ const WindowTable = ({onCloseHandler}: Props) => {
                             </TableRow>
                         ))}
                         <TableRow>
-                            <TableCell><input value={number} onChange={(e) => setNumber(e.target.value)} type="number"/></TableCell>
+                            <TableCell><input value={number}
+                                              onChange={(e) => setNumber(+e.target.value)}
+                                              type="number"/></TableCell>
                             <TableCell>today</TableCell>
                             <TableCell>
                                 <select value={user}
                                         onChange={e => setUser(e.target.value)}>
-                                    <option value="value1" selected>По умолчанию</option>
-                                    <option value="value2">USER1</option>
-                                    <option value="value3">USER2</option>
-                                    <option value="value4">USER3</option>
+                                    <option value="Default User" selected>По умолчанию</option>
+                                    <option value="USER1">USER1</option>
+                                    <option value="USER2">USER2</option>
+                                    <option value="USER3">USER3</option>
                                 </select>
                             </TableCell>
                             <TableCell><input value={comment}

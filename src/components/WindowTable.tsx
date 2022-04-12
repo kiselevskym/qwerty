@@ -1,37 +1,47 @@
-import React from 'react';
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import React, {Dispatch} from 'react';
+import {Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow} from "@mui/material";
+import {useForm} from "react-hook-form";
+import Input from "./fields/Input";
+import IRowItem from "../interfaces/IRowItem";
+import Select from "./fields/Select";
 
 
 type Props = {
-    onCloseHandler: () => void
+    rows: IRowItem[],
+    setRows: Dispatch<IRowItem[]>
 }
 
-const WindowTable = ({onCloseHandler}: Props) => {
-    const [number, setNumber] = React.useState<number>(0)
-    const [user, setUser] = React.useState<string>("Default User")
-    const [comment, setComment] = React.useState("")
+type Form = {
+    value: number,
+    date: string,
+    user: string,
+    comment: string
+}
+
+const WindowTable = ({rows, setRows}: Props) => {
+    const {register, handleSubmit, reset} = useForm<Form>()
+    const defaultUser = 'default user'
+
+    const onWindowCloseHandler = () => {
+        window.close()
+    }
 
 
-    const [state, setState] = React.useState([{
-        value: 555,
-        date: '20.01.2020',
-        user: 'Max',
-        comment: 'any'
-    }, {
-        value: 5668,
-        date: '21.01.2020',
-        user: 'Kate',
-        comment: ''
-    }])
-
-
-    const onAddHandler = () => {
+    const onSubmit = (data: Form) => {
         const date = new Date()
         const date_string = `${date.getDay()}-${date.getMonth() + 1}-${date.getFullYear()}`
-        setState([...state, {value: number, comment: comment, user, date: date_string}])
-        setNumber(0)
-        setUser("Default User")
-        setComment("")
+        setRows([...rows,
+            {
+                value: +data.value,
+                date: date_string,
+                user: data.user,
+                comment: data.comment
+            }])
+        reset({
+            value: 0,
+            user: defaultUser,
+            comment: "",
+        })
     }
 
     return (
@@ -47,7 +57,7 @@ const WindowTable = ({onCloseHandler}: Props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {state.map(item => (
+                        {rows.map((item) => (
                             <TableRow>
                                 <TableCell>{item.value}</TableCell>
                                 <TableCell>{item.date}</TableCell>
@@ -55,29 +65,28 @@ const WindowTable = ({onCloseHandler}: Props) => {
                                 <TableCell>{item.comment}</TableCell>
                             </TableRow>
                         ))}
-                        <TableRow>
-                            <TableCell><input value={number}
-                                              onChange={(e) => setNumber(+e.target.value)}
-                                              type="number"/></TableCell>
-                            <TableCell>today</TableCell>
-                            <TableCell>
-                                <select value={user}
-                                        onChange={e => setUser(e.target.value)}>
-                                    <option value="Default User" selected>По умолчанию</option>
-                                    <option value="USER1">USER1</option>
-                                    <option value="USER2">USER2</option>
-                                    <option value="USER3">USER3</option>
-                                </select>
-                            </TableCell>
-                            <TableCell><input value={comment}
-                                              onChange={(e) => setComment(e.target.value)}
-                                              type="text"/></TableCell>
-                        </TableRow>
                     </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell>
+                                <Input name={'value'} type={'number'} register={register}/>
+                            </TableCell>
+                            <TableCell>
+                                today
+                            </TableCell>
+                            <TableCell>
+                                <Select data={['user1', 'user2']} name={'user'} register={register}
+                                        defaultOption={defaultUser}/>
+                            </TableCell>
+                            <TableCell>
+                                <Input name={'comment'} register={register}/>
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </TableContainer>
-            <button onClick={onCloseHandler}>Close</button>
-            <button onClick={onAddHandler}>Add</button>
+            <button onClick={onWindowCloseHandler}>Close</button>
+            <button onClick={handleSubmit(onSubmit)}>Add</button>
         </div>
     );
 };

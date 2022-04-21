@@ -1,7 +1,6 @@
 import data from "../data";
 
 function useData() {
-
     return data
 }
 

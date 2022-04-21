@@ -1,16 +1,12 @@
 import React, {Dispatch} from 'react';
-import WindowTable from "../components/WindowTable";
+import TableWindow from "../components/TableWindow";
 import IRowItem from "../interfaces/IRowItem";
 
-type Props = {
-    rows: IRowItem[],
-    setRows: Dispatch<IRowItem[]>
-}
+const Details = () => {
 
-const Details = ({rows, setRows}: Props) => {
     return (
         <div>
-            <WindowTable rows={rows} setRows={setRows}/>
+            <TableWindow />
         </div>
     );
 };

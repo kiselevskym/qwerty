@@ -9,15 +9,13 @@ const data: IData = {
                     dateRelease: "2017-12-31",
                 },
                 YY: {
-                    value: 100000,
+                    value: 2,
                     dateRelease: "2017-12-31",
                 },
                 ZZ: {
                     value: 77,
                     dateRelease: "2017-12-31",
                 },
-                FF:{value: 77,
-                    dateRelease: "2017-12-31",}
             },
             2018: {
                 XX: {

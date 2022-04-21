@@ -12,7 +12,7 @@ const Select = ({data, name, register, defaultOption}: Props) => {
     return (
         <select {...register(name)}>
             <option value={defaultOption}>{defaultOption}</option>
-            {data.map(item => <option value={item}>{item}</option>)}
+            {data.map((item, index) => <option key={item+index} value={item}>{item}</option>)}
         </select>
     );
 };

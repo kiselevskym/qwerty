@@ -4,7 +4,8 @@ import {useForm} from "react-hook-form";
 import Input from "./fields/Input";
 import IRowItem from "../interfaces/IRowItem";
 import Select from "./fields/Select";
-
+import useTableStorage from "../hooks/useTableStorage";
+import useSessingStorage from "../hooks/useLocalStorage";
 
 type Props = {
     rows: IRowItem[],
@@ -18,32 +19,38 @@ type Form = {
     comment: string
 }
 
-const WindowTable = ({rows, setRows}: Props) => {
+const TableWindow = () => {
+
     const {register, handleSubmit, reset} = useForm<Form>()
     const defaultUser = 'default user'
+
 
     const onWindowCloseHandler = () => {
         window.close()
     }
-
+    const [state, dispatch] = useTableStorage()
 
     const onSubmit = (data: Form) => {
         const date = new Date()
         const date_string = `${date.getDay()}-${date.getMonth() + 1}-${date.getFullYear()}`
-        setRows([...rows,
-            {
-                value: +data.value,
-                date: date_string,
-                user: data.user,
-                comment: data.comment
-            }])
+
+        const item = {
+            value: +data.value,
+            date: date_string,
+            user: data.user,
+            comment: data.comment
+        }
+
+        dispatch({type: "ADD_ITEM", payload: {key: state.key, data: item}})
+
         reset({
             value: 0,
             user: defaultUser,
             comment: "",
         })
     }
-
+    console.log(state)
+    if (state.key === null) return <div>error</div>
     return (
         <div>
             <TableContainer>
@@ -57,8 +64,8 @@ const WindowTable = ({rows, setRows}: Props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((item) => (
-                            <TableRow>
+                        {state.data[state.key] && state.data[state.key].map((item: any, index: any) => (
+                            <TableRow key={index}>
                                 <TableCell>{item.value}</TableCell>
                                 <TableCell>{item.date}</TableCell>
                                 <TableCell>{item.user}</TableCell>
@@ -91,4 +98,4 @@ const WindowTable = ({rows, setRows}: Props) => {
     );
 };
 
-export default WindowTable;
+export default TableWindow;

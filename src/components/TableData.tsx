@@ -2,12 +2,13 @@ import React from 'react';
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import IData from "../interfaces/IData";
 import useWindowOpen from "../hooks/useWindowOpen";
+import useTableStorage from "../hooks/useTableStorage";
 
 
 interface transformDataProps {
     years: { title: string, colSpan: number }[],
     ceil: string[],
-    body: { [city: string]: string[] }
+    body: { [city: string]: { value: string, key: null | string }[] }
 }
 
 
@@ -15,20 +16,30 @@ interface transformDataProps {
 function transformData(data: IData): transformDataProps {
     const object: IData = JSON.parse(JSON.stringify(data))
 
+
+    Object.keys(object).map(cityName => {
+        Object.values(object[cityName].G).map(value => {
+            console.log(value)
+            const computedValue = value.ZZ.value * value.YY.value
+            value['WW'] = {value: computedValue, dateRelease: '-'}
+        })
+    })
+
+
     // default value if there is no value in the data
-    const defaultValue = '-'
+    const defaultValue = {value: '-', key: null}
 
     //information about TableHead
     //i using the Set so all values is unique
     //I assumed that there could be more values(XX,YY,ZZ...) for one year
     const header: { [year: string]: Set<string> } = {}
     //information about TableBody
-    const body: { [city: string]: string[] } = {}
+    const body: { [city: string]: { value: string, key: null | string }[] } = {}
 
 
     //header
-    Object.values(object).forEach(value => {
-        Object.entries(value.G).map((years) => {
+    Object.values(object).forEach(cityName => {
+        Object.entries(cityName.G).forEach((years) => {
             const [key, value] = years
             const names = Object.keys(value)
             if (header[key]) {
@@ -41,22 +52,27 @@ function transformData(data: IData): transformDataProps {
 
 
     //body
-    Object.keys(object).map(city_name => {
-        body[city_name] = []
+    Object.keys(object).forEach(cityName => {
+        body[cityName] = []
 
-        Object.entries(header).map(([year, types]) => {
+
+        Object.entries(header).forEach(([year, types]) => {
             types.forEach(type => {
-                const city_name_year = data[city_name].G[year]
+                const cityName_year = object[cityName].G[year]
 
-                if (city_name_year) {
-                    const value = city_name_year[type]
-                    value ? body[city_name].push("" + value.value) : body[city_name].push(defaultValue)
+                if (cityName_year) {
+                    const value = cityName_year[type]
+                    value ? body[cityName].push({
+                        value: "" + cityName_year[type].value,
+                        key: `${cityName}-${year}-${type}`
+                    }) : body[cityName].push(defaultValue)
                 } else {
-                    body[city_name].push(defaultValue)
+                    body[cityName].push(defaultValue)
                 }
             })
         })
     })
+
 
     const years = Object.entries(header).map(([key, value]) => ({
         title: key,
@@ -77,13 +93,20 @@ function transformData(data: IData): transformDataProps {
 
 type Props = {
     data: IData,
-    openWindowHandler?: () => void
 }
 
-const TableData = ({data, openWindowHandler}: Props) => {
-    const showPopup = useWindowOpen('/details')
+const TableData = ({data}: Props) => {
     const {years, ceil, body} = transformData(data)
+    const showPopup = useWindowOpen('/details')
+    const [, dispatch] = useTableStorage()
 
+
+    const onCellClickHandler = (key: string | null) => {
+        if (key !== null) {
+            dispatch({type: 'SET_KEY', payload: key})
+            showPopup()
+        }
+    }
 
     return (
         <TableContainer component={Paper}>
@@ -91,19 +114,21 @@ const TableData = ({data, openWindowHandler}: Props) => {
                 <TableHead>
                     <TableRow>
                         <TableCell rowSpan={2}>regions</TableCell>
-                        {years.map(item =>
-                            <TableCell colSpan={item.colSpan} align="center">{item.title}</TableCell>)}
+                        {years.map((item, index) =>
+                            <TableCell key={index} colSpan={item.colSpan} align="center">{item.title}</TableCell>)}
                     </TableRow>
                     <TableRow>
-                        {ceil.map(item => <TableCell align={"center"}>{item}</TableCell>)}
+                        {ceil.map((item, index) => <TableCell key={index} align={"center"}>{item}</TableCell>)}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.entries(body).map(([city_name, values]) =>
-                        <TableRow>
+                    {Object.entries(body).map(([city_name, values], index) =>
+                        <TableRow key={index}>
                             <TableCell align="center">{city_name}</TableCell>
-                            {values.map(item => <TableCell onClick={showPopup} align="center"
-                                                           colSpan={1}>{item}</TableCell>)}
+                            {values.map((item, index) => <TableCell key={index}
+                                                                    onClick={() => onCellClickHandler(item.key)}
+                                                                    align="center"
+                                                                    colSpan={1}>{item.value}</TableCell>)}
                         </TableRow>)}
                 </TableBody>
             </Table>

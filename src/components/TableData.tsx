@@ -2,7 +2,7 @@ import React from 'react';
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import IData from "../interfaces/IData";
 import useWindowOpen from "../hooks/useWindowOpen";
-import useTableStorage from "../hooks/useTableStorage";
+import useTableStorage, {setKey} from "../hooks/useTableStorage";
 
 
 interface transformDataProps {
@@ -103,7 +103,7 @@ const TableData = ({data}: Props) => {
 
     const onCellClickHandler = (key: string | null) => {
         if (key !== null) {
-            dispatch({type: 'SET_KEY', payload: key})
+            dispatch(setKey(key))
             showPopup()
         }
     }

@@ -4,7 +4,7 @@ import {useForm} from "react-hook-form";
 import Input from "./fields/Input";
 import IRowItem from "../interfaces/IRowItem";
 import Select from "./fields/Select";
-import useTableStorage from "../hooks/useTableStorage";
+import useTableStorage, {addItem} from "../hooks/useTableStorage";
 import useSessingStorage from "../hooks/useLocalStorage";
 
 type Props = {
@@ -41,7 +41,7 @@ const TableWindow = () => {
             comment: data.comment
         }
 
-        dispatch({type: "ADD_ITEM", payload: {key: state.key, data: item}})
+        dispatch(addItem({key: state.key, data: item}))
 
         reset({
             value: 0,
@@ -49,7 +49,6 @@ const TableWindow = () => {
             comment: "",
         })
     }
-    console.log(state)
     if (state.key === null) return <div>error</div>
     return (
         <div>

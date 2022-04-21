@@ -3,6 +3,13 @@ import useSessingStorage from "./useLocalStorage";
 
 const key = 'table'
 
+
+const setState = (value: any) => ({type: "SET_STATE", payload: value})
+const setKey = (value: any) => ({type: "SET_KEY", payload: value})
+const addItem = (value: any) => ({type: "ADD_ITEM", payload: value})
+
+export {setKey, addItem}
+
 function reducer(state: any, action: any) {
     const {payload, type} = action
     switch (type) {
@@ -39,10 +46,7 @@ function useTableStorage() {
     React.useEffect(() => {
         const listener = () => {
             const newState = localStorage.getItem(key)
-            newState !== JSON.stringify(state) && dispatch({
-                type: "SET_STATE",
-                payload: getLocalStorage(key)
-            })
+            newState !== JSON.stringify(state) && dispatch(setState(newState))
         }
 
         window.addEventListener('storage', listener)

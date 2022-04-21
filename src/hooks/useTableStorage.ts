@@ -46,7 +46,7 @@ function useTableStorage() {
     React.useEffect(() => {
         const listener = () => {
             const newState = localStorage.getItem(key)
-            newState !== JSON.stringify(state) && dispatch(setState(newState))
+            newState !== JSON.stringify(state) && dispatch(setState(getLocalStorage(key)))
         }
 
         window.addEventListener('storage', listener)

@@ -19,7 +19,6 @@ function transformData(data: IData): transformDataProps {
 
     Object.keys(object).map(cityName => {
         Object.values(object[cityName].G).map(value => {
-            console.log(value)
             const computedValue = value.ZZ.value * value.YY.value
             value['WW'] = {value: computedValue, dateRelease: '-'}
         })

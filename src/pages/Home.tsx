@@ -1,19 +1,12 @@
-import React from 'react';
+import React from "react";
 import TableData from "../components/TableData";
-import useData from "../hooks/useData";
-
-
 
 const Home = () => {
-    const data = useData()
-
-
-
-    return (
-        <div>
-            <TableData data={data}/>
-        </div>
-    );
+  return (
+    <div>
+      <TableData />
+    </div>
+  );
 };
 
 export default Home;

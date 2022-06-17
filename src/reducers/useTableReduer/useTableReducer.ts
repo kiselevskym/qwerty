@@ -41,7 +41,7 @@ function reducer(state: TableState, action: Action<TableActions>): TableState {
 }
 
 const initialState: TableState = {
-  data: {},
+  data: null,
   dataHistroy: {},
 };
 
@@ -53,7 +53,7 @@ function useTableReducer() {
   });
 
   React.useEffect(() => {
-    dispatch(setData(data));
+    if (!state.data) dispatch(setData(data));
   }, [KEY]);
 
   return [state, dispatch];

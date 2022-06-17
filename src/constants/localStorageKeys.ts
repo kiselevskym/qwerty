@@ -1,3 +1,3 @@
 export default {
-  table: "table-data",
+  table: "table-data-tq",
 };

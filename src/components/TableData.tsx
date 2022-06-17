@@ -120,7 +120,6 @@ const TableData: React.FC = () => {
     }
   };
 
-  if (!data) return <Loader />;
   return (
     <TableContainer component={Paper}>
       <Table>
